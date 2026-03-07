@@ -1,3 +1,29 @@
+# The IBM-Cloud bait
+
+I am committing this failure to this repo so that we can all have a good laugh about it.
+
+Also i learned something in this endeavor and isn't that what being an engineer is all about?
+
+### Why did you do this in IBM Cloud?
+
+Honestly it seemed like a fun/funny way to play with a cloud service provider i have not used before.
+
+I am a man who is comfortable getting uncomfortable and i like to play with and learn new things.
+
+What better way to do that then try the quest in a new CSP!?
+
+### What happened?
+
+Ok so i didn't realize there would be a hardcoded check for which cloud provider the app was deployed on.
+
+### What did we learn today?
+
+Well i didnt expect to say that i liked something about IBM cloud. 
+
+Even though this was a fail in its own way i experimented with something new and had a good laugh at my own expense.
+
+Also codeengine gives you the load balancer and TLS out of the box which is neat.
+
 # A quest in the clouds
 
 ### Q. What is this quest?
