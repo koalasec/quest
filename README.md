@@ -28,6 +28,7 @@ Also codeengine gives you the load balancer and TLS out of the box which is neat
 
 1. CI for docker builds and push to ghcr
 2. CD for terraform 
+3. Use a terraform module with sensible defaults for reusability instead of raw resources
 3. add some pre-commit, linters, etc
 4. security scans, SAST, SCA, docker security, terraform IAC scan etc
 
