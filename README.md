@@ -24,6 +24,13 @@ Even though this was a fail in its own way i experimented with something new and
 
 Also codeengine gives you the load balancer and TLS out of the box which is neat.
 
+### What else would i do if i could
+
+1. CI for docker builds and push to ghcr
+2. CD for terraform 
+3. add some pre-commit, linters, etc
+4. security scans, SAST, SCA, docker security, terraform IAC scan etc
+
 # A quest in the clouds
 
 ### Q. What is this quest?
