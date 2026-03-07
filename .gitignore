@@ -1,0 +1,24 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Terraform
+tf/.terraform/
+tf/terraform.tfstate
+tf/terraform.tfstate.backup
+tf/.terraform.tfstate.lock.info
+tf/.terraform.lock.hcl
+*.tfvars
+*.tfvars.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
