@@ -11,7 +11,7 @@ resource "ibm_code_engine_app" "quest" {
   image_port      = 3000
 
   scale_cpu_limit              = "2"
-  scale_memory_limit           = "2G"
+  scale_memory_limit           = "4G"
   scale_min_instances          = 0
   scale_max_instances          = 3
   scale_initial_instances      = 1
