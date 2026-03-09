@@ -10,9 +10,15 @@ resource "ibm_code_engine_app" "quest" {
   image_reference = "ghcr.io/koalasec/quest:latest"  # this is a public image for the sake of the quest
   image_port      = 3000
 
-  scale_cpu_limit              = "0.5"
-  scale_memory_limit           = "1G"
+  scale_cpu_limit              = "2"
+  scale_memory_limit           = "2G"
   scale_min_instances          = 0
   scale_max_instances          = 3
   scale_initial_instances      = 1
+
+  run_env_variables {
+    type  = "literal"
+    name  = "SECRET_WORD"
+    value = var.secret_word
+  }
 }
