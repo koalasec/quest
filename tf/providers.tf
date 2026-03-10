@@ -10,5 +10,5 @@ terraform {
 # looks for IC_API_KEY env variable. 
 # unlike aws there is just the api key not a pair of key id + access key
 provider "ibm" {
-  region           = var.region
+  region = var.region
 }
