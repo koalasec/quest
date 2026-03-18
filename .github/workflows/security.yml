@@ -199,33 +199,7 @@ jobs:
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
         run: |
-          cat > prompt.txt << 'PROMPT'
-          You are a security engineer performing a code review. Analyze the following git diff for security vulnerabilities.
-
-          Focus on:
-          - Injection flaws (SQL, command, LDAP, XPath, template injection)
-          - Authentication and authorization issues (broken access control, privilege escalation)
-          - Sensitive data exposure (hardcoded secrets, PII, credentials, tokens)
-          - Security misconfiguration (insecure defaults, missing headers, open CORS)
-          - Cross-site scripting (XSS) and output encoding issues
-          - Insecure deserialization
-          - Use of known vulnerable or outdated components
-          - Insufficient logging and monitoring of security events
-          - Insecure direct object references (IDOR)
-          - Cryptographic weaknesses (weak algorithms, improper key handling)
-
-          For each finding provide:
-          - Severity: CRITICAL / HIGH / MEDIUM / LOW / INFO
-          - File and line number
-          - Clear description of the vulnerability
-          - Concrete recommended fix with example code where applicable
-
-          If no issues are found, say so explicitly. Be concise and actionable.
-
-          Diff to review:
-          PROMPT
-          cat diff.txt >> prompt.txt
-          agent -p "$(cat prompt.txt)" --model gpt-5.2 > cursor_review.txt 2>&1
+          agent -p "You are a security engineer performing a code review. Analyze the following git diff for security vulnerabilities." --model gpt-5.2 > cursor_review.txt 2>&1
           cat cursor_review.txt
 
       - name: Post review comment on PR
