@@ -40,7 +40,7 @@ jobs:
           node-version: '25'
 
       - name: Run npm audit
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=critical
 
   # ── 2. Trivy Docker image scan ────────────────────────────────────────────────
   # Builds the Docker image then scans it for OS/library CVEs.
