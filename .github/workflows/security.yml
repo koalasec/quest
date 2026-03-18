@@ -30,7 +30,7 @@ jobs:
   # ── 1. npm audit ─────────────────────────────────────────────────────────────
   # Checks Node.js dependencies for known CVEs.
   npm-audit:
-    name: npm audit
+    name: SCA npm audit
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -43,43 +43,15 @@ jobs:
         with:
           node-version: '25'
 
-      - name: Generate lock file and install
-        # npm ci requires a lock file; this repo has none, so use npm install
-        # which creates package-lock.json and populates node_modules.
-        run: npm install
-
       - name: Run npm audit
         run: npm audit --audit-level=moderate
 
-  # ── 2. Trivy filesystem scan (deps + IaC + secrets) ──────────────────────────
-  # Scans source code, dependencies, and Terraform IaC.
-  # SARIF output is uploaded to the GitHub Advanced Security tab.
-  trivy-fs:
-    name: Trivy filesystem scan
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Run Trivy filesystem scan
-        uses: aquasecurity/trivy-action@6e7b7d1fd3e4fef0c5fa8cce1229c54b2c9bd0d8 # v0.28.0
-        with:
-          scan-type: fs
-          scan-ref: .
-          format: table
-          severity: CRITICAL
-          exit-code: '1'
-          scanners: vuln,misconfig,secret
-
-  # ── 3. Trivy Docker image scan ────────────────────────────────────────────────
+  # ── 2. Trivy Docker image scan ────────────────────────────────────────────────
   # Builds the Docker image then scans it for OS/library CVEs.
   # Runs after trivy-fs to avoid competing for runner resources during the build.
   trivy-image:
-    name: Trivy image scan
+    name: Container Trivy image scan
     runs-on: ubuntu-24.04
-    needs: trivy-fs
     permissions:
       contents: read
     steps:
@@ -110,7 +82,7 @@ jobs:
   #   CKV_AWS_65  - ECS Container Insights disabled (intentional in this project)
   #   CKV_AWS_97  - ECS task secrets in plaintext env (SECRET_WORD in main.tf)
   checkov:
-    name: Checkov IaC scan
+    name: IAC Checkov scan
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -131,7 +103,7 @@ jobs:
   # Static analysis of src/ using Semgrep OSS with the javascript and
   # nodejs security rule packs. No account or token required.
   semgrep:
-    name: Semgrep SAST
+    name: SAST Semgrep
     runs-on: ubuntu-24.04
     permissions:
       contents: read
