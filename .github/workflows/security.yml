@@ -127,7 +127,30 @@ jobs:
           output_format: cli
           skip_check: CKV_AWS_91,CKV2_AWS_28,CKV_AWS_65,CKV_AWS_97
 
-  # ── 5. Gitleaks — secrets detection ──────────────────────────────────────────
+  # ── 5. Semgrep — JavaScript SAST ─────────────────────────────────────────────
+  # Static analysis of src/ using Semgrep OSS with the javascript and
+  # nodejs security rule packs. No account or token required.
+  semgrep:
+    name: Semgrep SAST
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    container:
+      image: semgrep/semgrep
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Run Semgrep
+        run: >
+          semgrep scan
+          --config p/javascript
+          --config p/nodejs
+          --error
+          --no-rewrite-rule-ids
+          src/
+
+  # ── 6. Gitleaks — secrets detection ──────────────────────────────────────────
   # Scans the full git history and working tree for leaked credentials.
   # fetch-depth: 0 is required so Gitleaks can scan all commits, not just HEAD.
   gitleaks:
