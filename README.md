@@ -1,3 +1,52 @@
+# Solution
+
+Below is an overview of my architectural decisions and the reasoning behind each.
+
+## Implementation Choices
+
+1. **Version Control** — This repository is public and available for review.
+
+2. **Infrastructure as Code: Terraform** — Terraform is the industry standard for cloud IaC and the tool I have the most production depth with. It provides a clear, auditable, declarative state model well-suited for client-facing deliverables.
+
+3. **Cloud Provider: AWS (primary) / IBM Cloud (bonus)**
+   - The `dev-ibm` branch contains a parallel implementation in IBM Cloud, included as an exploration of multi-cloud portability.
+   - **Compute: ECS Fargate** — Fargate was selected because it abstracts away EC2 instance management entirely. From a security and compliance standpoint, this is a meaningful architectural choice: by offloading host-level responsibility to AWS under the shared responsibility model, we eliminate the EC2 patching and host-hardening surface from vulnerability management and audit scope. This simplifies compliance posture significantly while maintaining full application-layer control. Container and application-level vulnerabilities remain in scope and are addressed separately (see improvements below).
+
+4. **Proof of completion** — See `proof.png`.
+
+5. **Secret Word Injection via Terraform Task Definition**
+   - The `SECRET_WORD` environment variable is injected at the ECS task definition level via Terraform rather than hardcoded in the Dockerfile. This decouples configuration from the container image, enabling environment-specific overrides without rebuilding images.
+   - Because this value is intended to be publicly displayed, a secrets manager (e.g., AWS Secrets Manager, Parameter Store) was not used. In a production system handling sensitive values, that would be the appropriate pattern.
+
+6. **Load Balancer: Application Load Balancer (ALB)**
+   - An ALB is the appropriate choice for this workload. It integrates natively with ECS/Fargate for target registration and health checking, and provides first-class integration with AWS Certificate Manager (ACM) for TLS termination.
+
+7. **TLS: Self-Signed Certificate via Terraform + ACM**
+   - A self-signed certificate is generated and uploaded to ACM using Terraform, keeping the TLS configuration fully automated and version-controlled.
+   - Certificate validity is set to **47 days** to align with the [CA/Browser Forum's anticipated 2029 maximum validity requirements](https://cabforum.org/), demonstrating forward-looking compliance awareness.
+
+---
+
+## Given More Time, I Would Improve...
+
+The following items represent known gaps I would address to bring this to a production-ready, client-deliverable standard:
+
+1. **Terraform Module Abstraction**
+   - The current implementation uses raw Terraform resources intentionally. ECS/Fargate is not a resource set I build daily in my security engineering role, and working at the resource level was a deliberate choice to deepen familiarity and build the muscle memory needed to own this infrastructure confidently.
+   - In a client engagement, this would be refactored into a reusable module with sensible defaults, input validation, and published documentation.
+
+2. **CI/CD Pipeline**
+   A full pipeline would include:
+   - **Static analysis:** `tflint`, trailing whitespace, Terraform formatting checks
+   - **Security scanning:** SCA (dependency vulnerabilities), SAST, IaC scanning (e.g., Checkov, tfsec), Dockerfile scanning (e.g., Trivy, Grype)
+   - **Container build pipeline:** Automated image builds on commit with digest pinning
+   - **Dynamic testing:** OWASP ZAP scan against the deployed URL in an ephemeral test environment
+   - **End-to-end verification:** Automated validation of all `/check` endpoints using Terraform outputs
+
+3. **Container Image Hardening**
+   - The `node:25` base image is large and carries unnecessary packages, each representing additional CVE surface area.
+   - The recommended path is migrating to a distroless or [Chainguard](https://www.chainguard.dev/) base image, which routinely achieves near-zero known CVEs at the OS layer while maintaining compatibility with Node.js workloads.
+
 # A quest in the clouds
 
 ### Q. What is this quest?
